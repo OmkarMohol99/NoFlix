@@ -162,5 +162,7 @@ const styles = StyleSheet.create({
   peoplename: {
     fontSize: 13,
     marginTop: 5,
+    maxWidth: 80,
+    color: '#fff',
   },
 });
