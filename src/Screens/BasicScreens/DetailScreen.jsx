@@ -23,7 +23,6 @@ const DetailScreen = ({route}) => {
   const [mediaDetails, setMediaDetails] = useState([]);
   const [mediaVideoData, setMediaVideoData] = useState([]);
   const TrailerData = mediaVideoData.find(media => media?.type === 'Trailer');
-  console.log('-->', mediaDetails);
 
   useEffect(() => {
     const mediaId = route.params?.media_id;

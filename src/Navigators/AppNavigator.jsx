@@ -5,6 +5,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import Splash from '../Screens/MainScreens/Splash';
 import Main from '../Screens/MainScreens/Main';
 import DetailScreen from '../Screens/BasicScreens/DetailScreen';
+import Search from '../Screens/BasicScreens/Search';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,14 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Details"
           component={DetailScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="Search"
+          component={Search}
           options={{
             headerShown: false,
           }}

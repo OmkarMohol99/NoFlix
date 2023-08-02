@@ -1,20 +1,35 @@
-import {StyleSheet, Text, View, Image, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import React from 'react';
 import {AppUI} from '../../constants';
 import HomeCorousal from './Components/HomeCorousal';
+import {useNavigation} from '@react-navigation/native';
 
 const Home = () => {
+  const navigation = useNavigation();
+
+  const handleSearch = () => {
+    navigation.navigate('Search');
+  };
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.homeContent}>
         <Text style={styles.homeHeader}>What do you want to watch?</Text>
-        <View style={styles.searchContainer}>
-          <Text style={styles.searchText}>Search</Text>
-          <Image
-            style={styles.searchIcon}
-            source={require('../../Images/searchBorder.png')}
-          />
-        </View>
+        <TouchableOpacity activeOpacity={1} onPress={handleSearch}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchText}>Search</Text>
+            <Image
+              style={styles.searchIcon}
+              source={require('../../Images/searchBorder.png')}
+            />
+          </View>
+        </TouchableOpacity>
         <View>
           <HomeCorousal />
         </View>

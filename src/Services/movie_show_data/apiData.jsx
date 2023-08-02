@@ -83,3 +83,19 @@ export const getMediaVideosData = async (type, id) => {
     console.log(error);
   }
 };
+
+export const getSearchedData = async query => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/search/multi?query=${query}&include_adult=false&language=en-US&page=1`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
