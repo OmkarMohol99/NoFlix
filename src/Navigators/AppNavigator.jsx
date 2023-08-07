@@ -6,6 +6,8 @@ import Splash from '../Screens/MainScreens/Splash';
 import Main from '../Screens/MainScreens/Main';
 import DetailScreen from '../Screens/BasicScreens/DetailScreen';
 import Search from '../Screens/BasicScreens/Search';
+import CastDetails from '../Screens/BasicScreens/CastDetails';
+import CastMediaDetails from '../Screens/BasicScreens/CastMediaDetails';
 
 const Stack = createStackNavigator();
 
@@ -40,6 +42,22 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Search"
           component={Search}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="CastDetails"
+          component={CastDetails}
+          options={{
+            headerShown: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="CastMediaDetails"
+          component={CastMediaDetails}
           options={{
             headerShown: false,
           }}

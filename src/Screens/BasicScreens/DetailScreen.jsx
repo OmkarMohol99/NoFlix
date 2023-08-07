@@ -1,3 +1,4 @@
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,14 +8,16 @@ import {
   Image,
   SafeAreaView,
   Linking,
+  FlatList,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {AppUI} from '../../constants';
+import {useNavigation} from '@react-navigation/native';
+
 import {
+  getMediaCastDetails,
   getMediaDetailsById,
   getMediaVideosData,
 } from '../../Services/movie_show_data/apiData';
-import {useNavigation} from '@react-navigation/native';
+import {AppUI} from '../../constants';
 
 const DetailScreen = ({route}) => {
   const navigation = useNavigation();
@@ -22,6 +25,8 @@ const DetailScreen = ({route}) => {
   const [type, setType] = useState('');
   const [mediaDetails, setMediaDetails] = useState([]);
   const [mediaVideoData, setMediaVideoData] = useState([]);
+  const [castDetails, setCastDetails] = useState([]);
+  console.log(castDetails);
   const TrailerData = mediaVideoData.find(media => media?.type === 'Trailer');
 
   useEffect(() => {
@@ -59,6 +64,20 @@ const DetailScreen = ({route}) => {
     }
   }, [id, type]);
 
+  useEffect(() => {
+    const getCastDetails = async () => {
+      try {
+        const response = await getMediaCastDetails(type, id);
+        setCastDetails(response?.data?.cast);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (id && type) {
+      getCastDetails();
+    }
+  }, [id, type]);
+
   const handleBackPress = () => {
     navigation.goBack();
   };
@@ -70,119 +89,132 @@ const DetailScreen = ({route}) => {
   const handleMediaInfo = () => {
     Linking.openURL(`${mediaDetails?.homepage}`);
   };
+
+  const handleCastClick = castId => {
+    navigation.navigate('CastMediaDetails', {cast_id: castId});
+  };
+  const renderCastDetails = ({item}) => (
+    <TouchableOpacity
+      style={styles.castPicture}
+      onPress={() => handleCastClick(item?.id)}>
+      <Image
+        source={{uri: `https://image.tmdb.org/t/p/w300/${item.profile_path}`}}
+        style={styles.castImage}
+      />
+    </TouchableOpacity>
+  );
+
   return (
-    <>
-      <SafeAreaView>
-        <View style={styles.detailsHeaderContainer}>
-          <TouchableOpacity onPress={handleBackPress}>
-            <Image
-              style={styles.backButton}
-              source={require('../../Images/backButton.png')}
-            />
-          </TouchableOpacity>
-          <Text style={styles.detailsText}>Details</Text>
-          <TouchableOpacity>
-            <Image
-              style={styles.backButton}
-              source={require('../../Images/wishlistBorder.png')}
-            />
-          </TouchableOpacity>
-        </View>
-        <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.detailsHeaderContainer}>
+        <TouchableOpacity onPress={handleBackPress}>
           <Image
-            style={styles.mediaPoster}
+            style={styles.backButton}
+            source={require('../../Images/backButton.png')}
+          />
+        </TouchableOpacity>
+        <Text style={styles.detailsText}>Details</Text>
+        <TouchableOpacity>
+          <Image
+            style={styles.backButton}
+            source={require('../../Images/wishlistBorder.png')}
+          />
+        </TouchableOpacity>
+      </View>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        <Image
+          style={styles.mediaPoster}
+          source={{
+            uri: `https://image.tmdb.org/t/p/w500/${mediaDetails?.backdrop_path}`,
+          }}
+        />
+        <View style={styles.showDetailContainer}>
+          <Image
+            style={styles.mediaPosterSmall}
             source={{
-              uri: `https://image.tmdb.org/t/p/w500/${mediaDetails?.backdrop_path}`,
+              uri: `https://image.tmdb.org/t/p/w500/${mediaDetails?.poster_path}`,
             }}
           />
-          <View style={styles.showDetailContainer}>
-            <Image
-              style={styles.mediaPosterSmall}
-              source={{
-                uri: `https://image.tmdb.org/t/p/w500/${mediaDetails?.poster_path}`,
-              }}
-            />
-            <View style={styles.showDetails}>
-              <Text style={styles.showName}>
-                {type === 'movie'
-                  ? mediaDetails?.original_title
-                  : mediaDetails?.original_name}
-              </Text>
-              <Text style={styles.seasonEpisode}>
-                {type === 'movie'
-                  ? `- - -`
-                  : `${mediaDetails?.number_of_seasons} Seasons | ${mediaDetails?.number_of_episodes} Episodes`}
-              </Text>
-              <View style={styles.showTimDateContainer}>
-                <View style={styles.showTimeDateGenere}>
-                  <Image
-                    style={styles.timeDateGenreImage}
-                    source={require('../../Images/calendar.png')}
-                  />
-                  <Text style={styles.timeDateGenreText}>
-                    {type === 'movie'
-                      ? mediaDetails?.release_date
-                      : mediaDetails?.first_air_date}
-                  </Text>
-                </View>
-                {/* <View style={styles.showTimeDateGenere}>
-                  <Image
-                    style={styles.timeDateGenreImage}
-                    source={require('../../Images/clock.png')}
-                  />
-                  <Text style={styles.timeDateGenreText}>
-                    {mediaDetails?.spoken_languages?.name}
-                  </Text>
-                </View> */}
-                <View style={styles.showTimeDateGenere}>
-                  <Image
-                    style={styles.timeDateGenreImage}
-                    source={require('../../Images/star.png')}
-                  />
-                  <Text style={styles.timeDateGenreText}>
-                    {mediaDetails?.vote_average}
-                  </Text>
-                </View>
+          <View style={styles.showDetails}>
+            <Text style={styles.showName}>
+              {type === 'movie'
+                ? mediaDetails?.original_title
+                : mediaDetails?.original_name}
+            </Text>
+            <Text style={styles.seasonEpisode}>
+              {type === 'movie'
+                ? '- - -'
+                : `${mediaDetails?.number_of_seasons} Seasons | ${mediaDetails?.number_of_episodes} Episodes`}
+            </Text>
+            <View style={styles.showTimDateContainer}>
+              <View style={styles.showTimeDateGenere}>
+                <Image
+                  style={styles.timeDateGenreImage}
+                  source={require('../../Images/calendar.png')}
+                />
+                <Text style={styles.timeDateGenreText}>
+                  {type === 'movie'
+                    ? mediaDetails?.release_date
+                    : mediaDetails?.first_air_date}
+                </Text>
               </View>
-              <View style={styles.youtubeAndHomepageButtonContainer}>
-                <TouchableOpacity
-                  style={styles.youtubeButtonContainer}
-                  onPress={() => handleOpenTrailer(TrailerData?.key)}>
-                  <Image
-                    style={styles.buttonIcon}
-                    source={require('../../Images/play.png')}
-                  />
-                  <Text style={styles.buttonText}>Trailer</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.homepageButtonContainer}
-                  onPress={handleMediaInfo}>
-                  <Image
-                    style={styles.buttonIcon}
-                    source={require('../../Images/world-wide-web.png')}
-                  />
-                  <Text style={styles.buttonText}>Watch</Text>
-                </TouchableOpacity>
+              <View style={styles.showTimeDateGenere}>
+                <Image
+                  style={styles.timeDateGenreImage}
+                  source={require('../../Images/star.png')}
+                />
+                <Text style={styles.timeDateGenreText}>
+                  {mediaDetails?.vote_average}
+                </Text>
               </View>
             </View>
+            <View style={styles.youtubeAndHomepageButtonContainer}>
+              <TouchableOpacity
+                style={styles.youtubeButtonContainer}
+                onPress={() => handleOpenTrailer(TrailerData?.key)}>
+                <Image
+                  style={styles.buttonIcon}
+                  source={require('../../Images/play.png')}
+                />
+                <Text style={styles.buttonText}>Trailer</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.homepageButtonContainer}
+                onPress={handleMediaInfo}>
+                <Image
+                  style={styles.buttonIcon}
+                  source={require('../../Images/world-wide-web.png')}
+                />
+                <Text style={styles.buttonText}>Watch</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View>
-            <Text style={styles.mediaDesc}>{mediaDetails?.overview}</Text>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+        </View>
+
+        <View>
+          <Text style={styles.mediaDesc}>{mediaDetails?.overview}</Text>
+        </View>
+        <View style={styles.castContainer}>
+          <Text style={styles.castText}>Cast</Text>
+          <FlatList
+            data={castDetails}
+            renderItem={renderCastDetails}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={item => item.id.toString()}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-export default DetailScreen;
-
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: AppUI.APP_THEME_BACKGROUND,
-    width: '100%',
-    height: '100%',
-    padding: 10,
   },
   detailsHeaderContainer: {
     height: 50,
@@ -216,7 +248,6 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: 'cover',
     borderRadius: 8,
-    // marginLeft: 30,
   },
   showDetailContainer: {
     flexDirection: 'row',
@@ -240,7 +271,6 @@ const styles = StyleSheet.create({
   },
   showTimDateContainer: {
     alignItems: 'center',
-    // justifyContent: 'space-between',
     flexDirection: 'row',
     marginBottom: 10,
   },
@@ -263,13 +293,11 @@ const styles = StyleSheet.create({
   },
   youtubeAndHomepageButtonContainer: {
     alignItems: 'center',
-    justifyContent: 'space-between',
     flexDirection: 'row',
   },
   youtubeButtonContainer: {
     width: '45%',
     height: 30,
-    // backgroundColor: 'red',
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 5,
@@ -280,13 +308,13 @@ const styles = StyleSheet.create({
   homepageButtonContainer: {
     width: '45%',
     height: 30,
-    // backgroundColor: 'blue',
     borderWidth: 1,
     borderColor: '#fff',
     borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'space-between',
     flexDirection: 'row',
+    marginLeft: 'auto',
   },
   buttonIcon: {
     width: 15,
@@ -303,4 +331,30 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#fff',
   },
+  castContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  castText: {
+    color: '#fff',
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  castPicture: {
+    marginRight: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+  },
+  castImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 50,
+  },
+  scrollContent: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+  },
 });
+
+export default DetailScreen;

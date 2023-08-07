@@ -99,3 +99,50 @@ export const getSearchedData = async query => {
     console.log(error);
   }
 };
+
+export const getMediaCastDetails = async (type, id) => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/${type}/${id}/credits`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getCastDetailById = async id => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/person/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export const getMoviesAndTvShowsByCastId = async id => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/person/${id}/combined_credits`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};

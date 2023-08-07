@@ -60,6 +60,10 @@ const HomeCorousal = () => {
     navigation.navigate('Details', {media_id: mediaId, media_type: mediaType});
   };
 
+  const handlePeopleDetails = id => {
+    navigation.navigate('CastMediaDetails', {cast_id: id});
+  };
+
   const renderTvShow = ({item}) => (
     <TouchableOpacity
       style={styles.mediaContainer}
@@ -83,13 +87,15 @@ const HomeCorousal = () => {
   );
 
   const renderTrendingPeoples = ({item}) => (
-    <View style={styles.peopleContainer}>
+    <TouchableOpacity
+      style={styles.peopleContainer}
+      onPress={() => handlePeopleDetails(item?.id)}>
       <Image
         source={{uri: `https://image.tmdb.org/t/p/w300/${item.profile_path}`}}
         style={styles.peopleImage}
       />
       <Text style={styles.peoplename}>{item.name}</Text>
-    </View>
+    </TouchableOpacity>
   );
   return (
     <>

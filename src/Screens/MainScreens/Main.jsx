@@ -7,9 +7,9 @@ import {
 } from 'react-native';
 import React, {useState} from 'react';
 import Home from '../BasicScreens/Home';
-import Search from '../BasicScreens/Search';
 import Wishlist from '../BasicScreens/Wishlist';
 import Profile from '../BasicScreens/Profile';
+import Discover from '../BasicScreens/Discover';
 
 const Main = ({navigation}) => {
   const [activeScreen, setActiveScreen] = useState(0);
@@ -19,7 +19,7 @@ const Main = ({navigation}) => {
       case 0:
         return <Home />;
       case 1:
-        return <Search />;
+        return <Discover />;
       case 2:
         return <Wishlist />;
       case 3:
@@ -49,8 +49,8 @@ const Main = ({navigation}) => {
               style={styles.tabIcon}
               source={
                 activeScreen === 1
-                  ? require('../../Images/searchFill.png')
-                  : require('../../Images/searchBorder.png')
+                  ? require('../../Images/discoverFill.png')
+                  : require('../../Images/discoverBorder.png')
               }
             />
           </TouchableOpacity>
