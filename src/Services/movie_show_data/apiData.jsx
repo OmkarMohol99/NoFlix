@@ -131,10 +131,27 @@ export const getCastDetailById = async id => {
     console.log(error);
   }
 };
+
 export const getMoviesAndTvShowsByCastId = async id => {
   try {
     const response = await axios.get(
       `https://api.themoviedb.org/3/person/${id}/combined_credits`,
+      {
+        headers: {
+          Authorization: `Bearer ${Token}`,
+        },
+      },
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getAllTrendingMoviesTv = async () => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/trending/all/day`,
       {
         headers: {
           Authorization: `Bearer ${Token}`,

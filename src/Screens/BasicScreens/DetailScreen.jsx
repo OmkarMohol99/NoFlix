@@ -87,7 +87,11 @@ const DetailScreen = ({route}) => {
   };
 
   const handleMediaInfo = () => {
-    Linking.openURL(`${mediaDetails?.homepage}`);
+    try {
+      Linking.openURL(`${mediaDetails?.homepage}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleCastClick = castId => {

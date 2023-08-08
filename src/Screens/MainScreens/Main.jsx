@@ -44,7 +44,7 @@ const Main = ({navigation}) => {
               }
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => setActiveScreen(1)}>
+          {/* <TouchableOpacity onPress={() => setActiveScreen(1)}>
             <Image
               style={styles.tabIcon}
               source={
@@ -73,7 +73,7 @@ const Main = ({navigation}) => {
                   : require('../../Images/profileBorder.png')
               }
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
     </>

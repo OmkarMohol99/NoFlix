@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,12 +11,16 @@ import {
 } from 'react-native';
 
 import {AppUI} from '../../constants';
-import {getSearchedData} from '../../Services/movie_show_data/apiData';
+import {
+  getAllTrendingMoviesTv,
+  getSearchedData,
+} from '../../Services/movie_show_data/apiData';
 import {useNavigation} from '@react-navigation/native';
 
 const Search = () => {
   const navigation = useNavigation();
   const [searchedData, setSearchedData] = useState([]);
+  const [topSearchedData, setTopSearchedData] = useState([]);
 
   const handleSearchData = async query => {
     const modifiedQuery = query.replace(/\s+/g, '+');
@@ -28,11 +32,48 @@ const Search = () => {
     }
   };
 
+  useEffect(() => {
+    const getAllTrending = async () => {
+      try {
+        const response = await getAllTrendingMoviesTv();
+        setTopSearchedData(response?.data?.results);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllTrending();
+  }, []);
+
   const handleMediaPress = (mediaId, mediaType) => {
     navigation.navigate('Details', {media_id: mediaId, media_type: mediaType});
   };
 
   const renderSearchedData = ({item}) => (
+    <TouchableOpacity
+      style={styles.searchedDataContainer}
+      onPress={() =>
+        handleMediaPress(
+          item?.id,
+          item?.media_type === 'movie' ? 'movie' : 'tv',
+        )
+      }>
+      <Image
+        style={styles.mediaPoster}
+        source={{uri: `https://image.tmdb.org/t/p/w500/${item?.backdrop_path}`}}
+      />
+      <Text style={styles.searchedDataName}>
+        {item?.media_type === 'movie'
+          ? item?.original_title
+          : item?.original_name}
+      </Text>
+      <Image
+        style={styles.searchIcon}
+        source={require('../../Images/searchBorder.png')}
+      />
+    </TouchableOpacity>
+  );
+
+  const renderTopSearches = ({item}) => (
     <TouchableOpacity
       style={styles.searchedDataContainer}
       onPress={() =>
@@ -74,12 +115,21 @@ const Search = () => {
           <ScrollView
             style={styles.searchScroll}
             showsVerticalScrollIndicator={false}>
-            <FlatList
-              data={searchedData}
-              renderItem={renderSearchedData}
-              keyExtractor={item => item.id.toString()}
-              scrollEnabled={false}
-            />
+            {searchedData.length === 0 ? (
+              <FlatList
+                data={topSearchedData}
+                renderItem={renderTopSearches}
+                keyExtractor={item => item.id.toString()}
+                scrollEnabled={false}
+              />
+            ) : (
+              <FlatList
+                data={searchedData}
+                renderItem={renderSearchedData}
+                keyExtractor={item => item.id.toString()}
+                scrollEnabled={false}
+              />
+            )}
           </ScrollView>
         </View>
       </View>

@@ -72,7 +72,7 @@ const CastDetails = ({route}) => {
             <View style={styles.birthLocationContainer}>
               <Image
                 style={styles.birthLocationIcon}
-                source={require('../../Images/calendar.png')}
+                source={require('../../Images/cake.png')}
               />
               <Text style={styles.birthLocationText}>
                 {castDetail?.birthday}

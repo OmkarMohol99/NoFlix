@@ -84,9 +84,9 @@ const CastMediaDetails = ({route}) => {
           {mediaDetails?.map(media => (
             <>
               <TouchableOpacity
+                key={media?.id}
                 onPress={() => handleMediaPress(media?.id, media?.media_type)}>
                 <Image
-                  key={media?.id}
                   source={{
                     uri: `https://image.tmdb.org/t/p/w300/${media?.poster_path}`,
                   }}
